@@ -9,7 +9,7 @@ $TEMPNAME="SCU611_Hosts-master"
 
 $WINDOWSHOSTPATH="C:\Windows\System32\drivers\etc"
 
-function check-admin
+function Check-Admin
 {
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     return $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -71,7 +71,7 @@ function Remove-Temp
 
 Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow "开始执行安装脚本"
 Write-Host "======================="
-$AdminStatus=check-admin
+$AdminStatus=Check-Admin
 <#
 if( -not $AdminStatus)
 {
@@ -83,6 +83,7 @@ if( -not $AdminStatus)
 #>
 #Install-CA
 Backup-Hosts
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Get-Hosts
 Expand-Hosts
 Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Recurse -Force
