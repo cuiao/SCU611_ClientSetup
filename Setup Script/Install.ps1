@@ -63,7 +63,7 @@ function Backup-Hosts
 
 function Copy-Hosts
 {
-    $DESTHOSTSPATH=".\TEST"
+    $DESTHOSTSPATH=$WINDOWSHOSTPATH
     $IPV4_610HOSTSPATH="$HOSTPATH\IPV4\SCU610"
     $IPV4_611HOSTSPATH="$HOSTPATH\IPV4\SCU611"
     $IPV6_HOSTSPATH="$HOSTPATH\IPV6"
@@ -120,7 +120,7 @@ function Remove-Temp
 Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow "开始执行安装脚本"
 Write-Host "======================="
 $AdminStatus=Check-Admin
-<#
+
 if( -not $AdminStatus)
 {
     Write-Host -ForegroundColor Red "管理员权限检查失败，请关闭此窗口并以管理员权限重新运行Setup.bat"
@@ -128,8 +128,8 @@ if( -not $AdminStatus)
     Write-Host -ForegroundColor White -BackgroundColor Red "安装失败"
     return
 }
-#>
-#Install-CA
+
+Install-CA
 Backup-Hosts
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Get-Hosts
