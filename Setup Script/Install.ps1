@@ -40,7 +40,7 @@ function Expand-Hosts
 {
     Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline "解压:"
     unzip -o -q $HOSTFILEPATH -d $HOSTPATH
-    Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Force
+    Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Recurse -Force
     Write-Host -ForegroundColor Green "完成"
     Write-Host "-----------------------"
     return
@@ -49,15 +49,63 @@ function Expand-Hosts
 function Backup-Hosts
 {
     $BACKUPPATH=".\Backup"
+    $DATE=Get-Date -Format s | ForEach-Object {$_ -replace ":", "."}
     Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline "备份HOSTS:"
     if(!(Test-Path $BACKUPPATH))
     {
         New-Item -ItemType "directory" -Force -Path $BACKUPPATH | Out-Null
     }
-    Copy-Item "$WINDOWSHOSTPATH\hosts" $BACKUPPATH -Force
+    Copy-Item "$WINDOWSHOSTPATH\hosts" "$BACKUPPATH\hosts_$date" -Force
     Write-Host -ForegroundColor Green "完成"
     Write-Host "-----------------------"
     return
+}
+
+function Copy-Hosts
+{
+    $DESTHOSTSPATH=".\TEST"
+    $IPV4_610HOSTSPATH="$HOSTPATH\IPV4\SCU610"
+    $IPV4_611HOSTSPATH="$HOSTPATH\IPV4\SCU611"
+    $IPV6_HOSTSPATH="$HOSTPATH\IPV6"
+    $Prompt="
+    1. 安装IPV4/SCU610 HOSTS
+    2. 安装IPV4/SCU611 HOSTS
+    3. 安装IPV6 HOSTS
+    "
+    $CHOICE = Read-Host -Prompt $Prompt
+    Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline "拷贝所选HOSTS至系统文件夹:"
+    switch($CHOICE)
+    {
+        1
+        {
+            Copy-Item "$IPV4_610HOSTSPATH\hosts" "$DESTHOSTSPATH" -Force
+            Write-Host -ForegroundColor Green "完成"
+        }
+        2
+        {
+            Copy-Item "$IPV4_611HOSTSPATH\hosts" "$DESTHOSTSPATH" -Force
+            Write-Host -ForegroundColor Green "完成"
+        }
+        3
+        {
+            Copy-Item "$IPV6_HOSTSPATH\hosts" "$DESTHOSTSPATH" -Force
+            Write-Host -ForegroundColor Green "完成"
+        }
+        default
+        {
+            Write-Host -ForegroundColor White -BackgroundColor Red "选项有误，失败"
+        }
+    }
+    Write-Host "-----------------------"
+    return
+}
+
+function Refresh-DNS
+{
+    Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline  "刷新DNS:"
+    ipconfig /flushdns | Out-Null
+    Write-Host -ForegroundColor Green "完成"
+    Write-Host "-----------------------"
 }
 
 function Remove-Temp
@@ -86,7 +134,8 @@ Backup-Hosts
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Get-Hosts
 Expand-Hosts
-Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Recurse -Force
+Copy-Hosts
+Refresh-DNS
 Remove-Temp
 Write-Host "======================="
 Write-Host -ForegroundColor White -BackgroundColor Green "安装成功"
