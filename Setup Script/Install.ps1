@@ -40,6 +40,7 @@ function Expand-Hosts
 {
     Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline "Ω‚—π:"
     unzip -o -q $HOSTFILEPATH -d $HOSTPATH
+    # Unzip-File $HOSTFILEPATH $HOSTPATH
     Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Recurse -Force
     Write-Host -ForegroundColor Green "ÕÍ≥…"
     Write-Host "-----------------------"
