@@ -39,8 +39,7 @@ function Get-Hosts
 function Expand-Hosts
 {
     Write-Host -BackgroundColor DarkCyan -ForegroundColor Yellow -NoNewline "Ω‚—π:"
-    unzip -o -q $HOSTFILEPATH -d $HOSTPATH
-    # Unzip-File $HOSTFILEPATH $HOSTPATH
+    Expand-Archive -Path $HOSTFILEPATH -DestinationPath $HOSTPATH -Force
     Copy-Item "$HOSTPATH\$TEMPNAME\*" "$HOSTPATH\" -Recurse -Force
     Write-Host -ForegroundColor Green "ÕÍ≥…"
     Write-Host "-----------------------"
